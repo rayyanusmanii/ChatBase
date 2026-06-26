@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Dark border rounded square -->
+  <rect x="2" y="2" width="96" height="96" rx="22" ry="22" fill="#2a1f0e"/>
+  <!-- Brown fill rounded square -->
+  <rect x="6" y="6" width="88" height="88" rx="18" ry="18" fill="#a07848"/>
+  <!-- White chat bubble -->
+  <!-- Main bubble body -->
+  <rect x="22" y="26" width="56" height="42" rx="10" ry="10" fill="white"/>
+  <!-- Tail of bubble pointing bottom-left -->
+  <polygon points="28,68 20,80 42,68" fill="white"/>
+</svg>

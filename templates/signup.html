@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChatBase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ede0cc;
+      font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .card {
+      background: #e8d9c0;
+      border: 2px solid #2d2416;
+      border-radius: 18px;
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #a0784a, #c8a97e);
+      border-radius: 10px;
+      border: 1.5px solid #2d2416;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .logo-icon svg { width: 20px; height: 20px; fill: #fff; }
+
+    .logo-text {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1a1208;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #1a1208;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 0.875rem;
+      color: #7a6a52;
+      margin-bottom: 24px;
+    }
+
+    .flash-msg {
+      color: #b94040;
+      font-size: 0.85rem;
+      margin-bottom: 14px;
+      background: #f5e0d8;
+      border: 1.5px solid #b94040;
+      border-radius: 8px;
+      padding: 8px 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #4a3a28;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px 14px;
+      background: #f5ead8;
+      border: 1.5px solid #2d2416;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: #1a1208;
+      outline: none;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+
+    input:focus { border-color: #a0784a; }
+    input::placeholder { color: #7a6a52; }
+
+    .btn-primary {
+      width: 100%;
+      padding: 11px;
+      background: #a0784a;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-family: inherit;
+      border: 1.5px solid #2d2416;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover { background: #8a6640; }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 20px 0 16px;
+      color: #7a6a52;
+      font-size: 0.8rem;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      flex: 1;
+      height: 1.5px;
+      background: #2d2416;
+      opacity: 0.25;
+    }
+
+    .signup-row {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #7a6a52;
+    }
+
+    .btn-signup {
+      background: none;
+      border: none;
+      color: #a0784a;
+      font-size: 0.85rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .btn-signup:hover { color: #2d2416; }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .back-link {
+      background: none;
+      border: none;
+      color: #7a6a52;
+      font-size: 0.85rem;
+      font-family: inherit;
+      cursor: pointer;
+      padding: 0;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .back-link:hover { color: #1a1208; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo-row">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+      </div>
+      <span class="logo-text">ChatBase</span>
+    </div>
+
+    
+    <div class="view active" id="login-view">
+      <h1>Welcome back</h1>
+      <p class="subtitle">Sign in to your account</p>
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for message in messages %}
+            <p class="flash-msg">{{ message }}</p>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST" action="/login">
+        <label for="login-username">Username</label>
+        <input type="text" id="login-username" name="username" placeholder="Enter your username" autocomplete="username" />
+
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" name="password" placeholder="Enter your password" autocomplete="current-password" />
+
+        <button type="submit" class="btn-primary">Log in</button>
+      </form>
+
+      <div class="divider">or</div>
+
+      <div class="signup-row">
+        Don't have an account?
+        <button type="button" class="btn-signup" onclick="showView('signup-view')">Sign up</button>
+      </div>
+    </div>
+
+    
+    <div class="view" id="signup-view">
+      <button type="button" class="back-link" onclick="showView('login-view')">&#8592; Back to login</button>
+      <h1>Create account</h1>
+      <p class="subtitle">Fill in the details below to get started</p>
+
+      <form method="POST" action="/signup">
+        <label for="signup-username">Username</label>
+        <input type="text" id="signup-username" name="username" placeholder="Choose a username" autocomplete="username" />
+
+        <label for="signup-password">Password</label>
+        <input type="password" id="signup-password" name="password" placeholder="Create a password" autocomplete="new-password" />
+
+        <label for="signup-confirm">Confirm password</label>
+        <input type="password" id="signup-confirm" name="confirm" placeholder="Repeat your password" autocomplete="new-password" />
+
+        <button type="submit" class="btn-primary">Sign up</button>
+      </form>
+    </div>
+
+  </div>
+
+  <script>
+    function showView(id) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+  </script>
+</body>
+</html>

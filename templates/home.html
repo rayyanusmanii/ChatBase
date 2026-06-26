@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChatBase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      height: 100vh;
+      background: #ede0cc;
+      display: flex;
+      font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .app {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      background: #ede0cc;
+      border: 2px solid #2d2416;
+      overflow: hidden;
+    }
+
+    
+    .sidebar {
+      width: 300px;
+      min-width: 300px;
+      border-right: 2px solid #2d2416;
+      display: flex;
+      flex-direction: column;
+      background: #e8d9c0;
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 22px 20px 18px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #a0784a, #c8a97e);
+      border-radius: 10px;
+      border: 1.5px solid #2d2416;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .logo-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: #fff;
+    }
+
+    .logo-text {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1a1208;
+    }
+
+    /* Search bar */
+    .sidebar-search {
+      padding: 0 14px 12px;
+    }
+
+    .sidebar-search input {
+      width: 100%;
+      padding: 8px 12px;
+      background: #f5ead8;
+      border: 1.5px solid #2d2416;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: inherit;
+      color: #1a1208;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .sidebar-search input::placeholder { color: #7a6a52; }
+    .sidebar-search input:focus { border-color: #a0784a; }
+
+    .sidebar-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      border-top: 1.5px solid #2d2416;
+      border-bottom: 1.5px solid #2d2416;
+    }
+
+    .sidebar-section h2 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #7a6a52;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .btn-add {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid #2d2416;
+      background: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #7a6a52;
+      font-size: 1.15rem;
+      line-height: 1;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+
+    .btn-add:hover {
+      border-color: #a0784a;
+      color: #a0784a;
+      background: #f5ead8;
+    }
+
+    
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #7a6a52;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      padding: 10px 12px 4px;
+    }
+
+    .room-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+
+    .room-list::-webkit-scrollbar { width: 4px; }
+    .room-list::-webkit-scrollbar-thumb { background: #c8b89a; border-radius: 2px; }
+
+    .room-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+      color: #4a3a28;
+      font-size: 0.9rem;
+      text-decoration: none;
+      border: 1.5px solid transparent;
+    }
+
+    .room-item:hover { background: #ddd0b8; border-color: #2d2416; }
+    .room-item.active { background: #2d2416; color: #f5ead8; font-weight: 600; border-color: #2d2416; }
+
+    .empty-rooms {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 40px 20px;
+    }
+
+    .empty-rooms svg {
+      width: 46px;
+      height: 46px;
+      stroke: #c8b89a;
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .empty-rooms p {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #7a6a52;
+    }
+
+    .empty-rooms span {
+      font-size: 0.8rem;
+      color: #a09070;
+      text-align: center;
+    }
+
+    
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #ede0cc;
+    }
+
+    .topbar {
+      height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 24px;
+      background: #e8d9c0;
+      border-bottom: 1.5px solid #2d2416;
+    }
+
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f5ead8;
+      border: 1.5px solid #2d2416;
+      padding: 5px 14px 5px 6px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      color: #1a1208;
+    }
+
+    .avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #a0784a, #c8a97e);
+      border: 1.5px solid #2d2416;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .welcome-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 40px;
+      text-align: center;
+    }
+
+    
+    .illustration {
+      position: relative;
+      width: 200px;
+      height: 150px;
+      margin-bottom: 4px;
+    }
+
+    .bubble-main {
+      position: absolute;
+      left: 14px;
+      top: 16px;
+      width: 126px;
+      height: 96px;
+      background: linear-gradient(135deg, #b8894e, #a0784a);
+      border-radius: 24px 24px 24px 6px;
+      border: 2px solid #2d2416;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .bubble-main .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.85);
+    }
+
+    .bubble-small {
+      position: absolute;
+      right: 4px;
+      bottom: 10px;
+      width: 96px;
+      height: 68px;
+      background: #f5ead8;
+      border: 2px solid #2d2416;
+      border-radius: 18px 18px 6px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .bubble-small .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(160, 120, 74, 0.5);
+    }
+
+    .speck {
+      position: absolute;
+      border-radius: 50%;
+      background: #c8b89a;
+    }
+
+    .welcome-area h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #1a1208;
+    }
+
+    .welcome-area p {
+      font-size: 0.93rem;
+      color: #7a6a52;
+      max-width: 300px;
+      line-height: 1.65;
+    }
+
+    .btn-start {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      background: #a0784a;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-family: inherit;
+      border: 2px solid #2d2416;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.15s;
+    }
+
+    .btn-start:hover { background: #8a6438; }
+
+    
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(45, 36, 22, 0.55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .picker {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      position: relative;
+    }
+
+    .picker-side {
+      width: 28vw;
+      max-width: 360px;
+      min-width: 220px;
+      height: 55vh;
+      max-height: 480px;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 40px 28px;
+      cursor: pointer;
+      transition: transform 0.15s;
+      text-align: center;
+      border-radius: 20px;
+      border: 2px solid #2d2416;
+    }
+
+    .picker-side:first-child { background: #2d2416; }
+    .picker-side:last-child  { background: #ede0cc; }
+    .picker-side:hover { transform: translateY(-4px); }
+    .picker-side:first-child .picker-title { color: #fff; }
+    .picker-side:first-child .picker-desc  { color: #fff; }
+
+    .picker-divider { display: none; }
+
+    .picker-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #a0784a, #c8a97e);
+      border: 1.5px solid #2d2416;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2px;
+    }
+
+    .picker-icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: #fff;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .picker-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #1a1208;
+    }
+
+    .picker-desc {
+      font-size: 0.82rem;
+      color: #1a1208;
+      line-height: 1.55;
+      max-width: 200px;
+    }
+
+    .picker-close {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: #f5ead8;
+      cursor: pointer;
+      line-height: 1;
+      z-index: 10;
+      transition: color 0.15s;
+    }
+
+    .picker-close:hover { color: #fff; }
+
+    
+    .modal {
+      background: #f5ead8;
+      border-radius: 16px;
+      border: 2px solid #2d2416;
+      padding: 32px 28px 24px;
+      width: 100%;
+      max-width: 360px;
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .modal.open { display: flex; }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-header h3 { font-size: 1.05rem; font-weight: 700; color: #1a1208; }
+
+    .modal-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #7a6a52;
+      font-size: 1.3rem;
+      line-height: 1;
+      padding: 2px 4px;
+      border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .modal-close:hover { color: #1a1208; background: #e8d9c0; }
+
+    .modal input[type="text"] {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #2d2416;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: #1a1208;
+      background: #ede0cc;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .modal input[type="text"]:focus { border-color: #a0784a; }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .btn-cancel {
+      padding: 9px 18px;
+      background: none;
+      border: 1.5px solid #2d2416;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      font-family: inherit;
+      color: #7a6a52;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-cancel:hover { background: #e8d9c0; }
+
+    .btn-submit {
+      padding: 9px 20px;
+      background: #a0784a;
+      color: #fff;
+      border: 1.5px solid #2d2416;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-submit:hover { background: #8a6438; }
+  </style>
+</head>
+<body>
+  <div class="app">
+
+    
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24"><path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+        </div>
+        <span class="logo-text">ChatBase</span>
+      </div>
+
+      <div class="sidebar-section">
+        <h2>Messages</h2>
+        <button id="chat-btn" class="btn-add open-chat" title="New group chat">+</button>
+      </div>
+
+      <div class="room-list">
+        
+        <div class="section-label">Direct Messages</div>
+        {% if dm_rooms %}
+          {% for room in dm_rooms %}
+            <a href="/room/{{ room.id }}" class="room-item">
+              <span class="room-name">{{ room.gcnames }}</span>
+            </a>
+          {% endfor %}
+        {% else %}
+          <div style="padding:6px 12px 10px;font-size:0.78rem;color:#a09070;">No friends yet</div>
+        {% endif %}
+
+       
+        <div class="section-label">Groups</div>
+        {% if gc_rooms %}
+          {% for room in gc_rooms %}
+            <a href="/room/{{ room.id }}" class="room-item">
+              <span class="room-name">{{ room.gcnames }}</span>
+            </a>
+          {% endfor %}
+        {% else %}
+          <div class="empty-rooms">
+            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <p>No groups yet</p>
+            <span>Create one with the + button.</span>
+          </div>
+        {% endif %}
+      </div>
+    </aside>
+
+    
+    <div class="main">
+      <header class="topbar">
+        <div class="user-chip">
+          <div class="avatar">{{ username[0]|upper }}</div>
+          <span>{{ username }}</span>
+        </div>
+      </header>
+
+      <div class="welcome-area">
+        <div class="illustration">
+          <div class="speck" style="width:6px;height:6px;top:8px;left:80px;opacity:.5;"></div>
+          <div class="speck" style="width:5px;height:5px;top:30px;right:20px;opacity:.4;"></div>
+          <div class="speck" style="width:4px;height:4px;bottom:22px;left:6px;opacity:.35;"></div>
+          <div style="position:absolute;top:12px;right:30px;width:14px;height:3px;background:#c8b89a;border-radius:2px;transform:rotate(-30deg);opacity:.6;"></div>
+          <div style="position:absolute;top:48px;right:8px;width:10px;height:3px;background:#c8b89a;border-radius:2px;opacity:.5;"></div>
+
+          <div class="bubble-main">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+          <div class="bubble-small">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+
+        <h2>Welcome back, {{ username }}!</h2>
+        <p>You're all caught up! Start a new conversation or continue where you left off.</p>
+
+        <button class="btn-start open-chat">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          Start a new chat
+        </button>
+
+
+      </div>
+    </div>
+
+  </div>
+
+  
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="picker" id="picker">
+      <button class="picker-close" id="modal-close">&times;</button>
+
+      
+      <div class="picker-side" id="pick-group">
+        <div class="picker-icon">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="picker-title">Group Chat</div>
+        <div class="picker-desc">Create a room and invite multiple people to chat together.</div>
+      </div>
+
+      <div class="picker-divider"></div>
+
+      
+      <div class="picker-side" id="pick-dm">
+        <div class="picker-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div class="picker-title">Direct Message</div>
+        <div class="picker-desc">Start a private one-on-one conversation with someone.</div>
+      </div>
+    </div>
+
+    
+    <div class="modal" id="modal-group">
+      <div class="modal-header">
+        <h3>New group chat</h3>
+        <button class="modal-close" id="modal-close-group">&times;</button>
+      </div>
+      <form method="POST" action="/create_room">
+        <input type="text" name="room_name" placeholder="Chat name..." autocomplete="off" id="room-name-input" required />
+        <div class="modal-actions" style="margin-top: 4px;">
+          <button type="button" class="btn-cancel" id="modal-back-group">Back</button>
+          <button type="submit" class="btn-submit">Create</button>
+        </div>
+      </form>
+    </div>
+
+    
+    <div class="modal" id="modal-dm">
+      <div class="modal-header">
+        <h3>Direct Message</h3>
+        <button class="modal-close" id="modal-close-dm">&times;</button>
+      </div>
+      <form method="GET" action="/dm">
+        <input type="text" name="username" placeholder="Enter username..." autocomplete="off" id="dm-username-input" required />
+        <div class="modal-actions" style="margin-top: 4px;">
+          <button type="button" class="btn-cancel" id="modal-back-dm">Back</button>
+          <button type="submit" class="btn-submit">Start DM</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div id="toast-container" style="position:fixed;bottom:24px;right:24px;z-index:200;display:flex;flex-direction:column;gap:10px;">
+        {% for message in messages %}
+          <div class="toast" style="background:#f5ead8;border:1.5px solid #2d2416;border-left:4px solid #a0784a;border-radius:10px;padding:12px 18px;font-size:0.875rem;font-weight:500;color:#1a1208;opacity:1;transition:opacity 0.4s;">{{ message }}</div>
+        {% endfor %}
+      </div>
+      <script>
+        setTimeout(function() {
+          document.querySelectorAll('.toast').forEach(function(t) { t.style.opacity = '0'; });
+          setTimeout(function() {
+            const c = document.getElementById('toast-container');
+            if (c) c.remove();
+          }, 400);
+        }, 3000);
+      </script>
+    {% endif %}
+  {% endwith %}
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

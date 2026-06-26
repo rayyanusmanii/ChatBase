@@ -1,4 +1,5 @@
-git rm -r --cached instance/
-git add .gitignore
-git commit -m "add gitignore, remove db from tracking"
-git push
+instance/
+*.db
+__pycache__/
+*.pyc
+.env

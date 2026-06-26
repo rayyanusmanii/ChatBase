@@ -1,6 +1,9 @@
 # ChatBase
 
 **ChatBase** is a full-stack real-time messaging application built with Flask and Flask-SocketIO. It supports user authentication, group chats, and direct messages, with WebSocket-powered instant delivery and a persistent SQLite database managed through SQLAlchemy ORM.
+<img width="1470" height="835" alt="1" src="https://github.com/user-attachments/assets/65c48ae0-351e-42cb-9ff6-cdd3c8b4cd94" /> 
+<img width="1470" height="836" alt="2" src="https://github.com/user-attachments/assets/1802819c-21f5-42ad-b3d8-0a405e1be579" />
+<img width="1470" height="834" alt="3" src="https://github.com/user-attachments/assets/b2e64ac8-16a7-457a-a2cd-968ba2ef97d8" />
 
 ---
 
